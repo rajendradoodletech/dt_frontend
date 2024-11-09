@@ -1,0 +1,103 @@
+{
+    "contacts": [
+      {
+        "id": "contact_1",
+        "wa_id": "11234567890",
+        "profile": {
+          "name": "John Doe",
+          "profile_picture_url": "https://example.com/johndoe.jpg"
+        },
+        "status": "available",
+        "last_interaction": "2023-08-01T12:00:00Z",
+        "last_seen": "2023-08-01T11:59:00Z"
+      },
+      {
+        "id": "contact_2",
+        "wa_id": "19876543210",
+        "profile": {
+          "name": "Jane Smith",
+          "profile_picture_url": "https://example.com/janesmith.jpg"
+        },
+        "status": "away",
+        "last_interaction": "2023-08-02T14:30:00Z",
+        "last_seen": "2023-08-02T14:00:00Z"
+      }
+    ],
+    "messages": [
+      {
+        "id": "message_1",
+        "from": "11234567890",
+        "to": "19876543210",
+        "type": "text",
+        "text": {
+          "body": "Hello, how can I help you?"
+        },
+        "status": "sent",
+        "timestamp": "2023-08-01T12:05:00Z",
+        "message_direction": "OUTBOUND",
+        "delivery_status": "delivered"
+      },
+      {
+        "id": "message_2",
+        "from": "19876543210",
+        "to": "11234567890",
+        "type": "text",
+        "text": {
+          "body": "I have a question about my order."
+        },
+        "status": "delivered",
+        "timestamp": "2023-08-01T12:06:00Z",
+        "message_direction": "INBOUND",
+        "delivery_status": "read"
+      },
+      {
+        "id": "message_3",
+        "from": "11234567890",
+        "to": "19876543210",
+        "type": "image",
+        "image": {
+          "link": "https://example.com/image.jpg",
+          "caption": "Here is the image you requested."
+        },
+        "status": "sent",
+        "timestamp": "2023-08-01T12:10:00Z",
+        "message_direction": "OUTBOUND",
+        "delivery_status": "delivered"
+      }
+    ],
+    "media": [
+      {
+        "id": "media_1",
+        "media_url": "https://example.com/image.jpg",
+        "mime_type": "image/jpeg",
+        "sha256": "9c9df1f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3",
+        "file_size": 123456,
+        "upload_timestamp": "2023-08-01T12:10:00Z"
+      },
+      {
+        "id": "media_2",
+        "media_url": "https://example.com/document.pdf",
+        "mime_type": "application/pdf",
+        "sha256": "abc123abc123abc123abc123abc123abc123abc123abc123abc123",
+        "file_size": 789012,
+        "upload_timestamp": "2023-08-02T14:00:00Z"
+      }
+    ],
+    "messages_statuses": [
+      {
+        "id": "status_1",
+        "message_id": "message_1",
+        "recipient_id": "19876543210",
+        "status": "delivered",
+        "timestamp": "2023-08-01T12:07:00Z"
+      },
+      {
+        "id": "status_2",
+        "message_id": "message_2",
+        "recipient_id": "11234567890",
+        "status": "read",
+        "timestamp": "2023-08-01T12:08:00Z"
+      }
+    ]
+  }
+  

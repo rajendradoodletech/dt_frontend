@@ -1,0 +1,51 @@
+{
+    "campaigns": [
+      {
+        "name": "Campaign 1",
+        "message": "Message for Campaign 1",
+        "audience": "Audience 1"
+      },
+      {
+        "name": "Campaign 2",
+        "message": "Message for Campaign 2",
+        "audience": "Audience 2"
+      },
+      {
+        "name": "Campaign 3",
+        "message": "Message for Campaign 3",
+        "audience": "Audience 3"
+      },
+      {
+        "name": "Campaign 4",
+        "message": "Message for Campaign 4",
+        "audience": "Audience 4"
+      },
+      {
+        "name": "Campaign 5",
+        "message": "Message for Campaign 5",
+        "audience": "Audience 5"
+      }
+    ],
+    "audiences": [
+      {
+        "name": "Audience 1",
+        "contacts": ["contact1@example.com", "contact2@example.com", "contact3@example.com"]
+      },
+      {
+        "name": "Audience 2",
+        "contacts": ["contact4@example.com", "contact5@example.com", "contact6@example.com"]
+      },
+      {
+        "name": "Audience 3",
+        "contacts": ["contact7@example.com", "contact8@example.com", "contact9@example.com"]
+      },
+      {
+        "name": "Audience 4",
+        "contacts": ["contact10@example.com", "contact11@example.com", "contact12@example.com"]
+      },
+      {
+        "name": "Audience 5",
+        "contacts": ["contact13@example.com", "contact14@example.com", "contact15@example.com"]
+      }
+    ]
+  }

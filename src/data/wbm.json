@@ -1,0 +1,125 @@
+{
+    "businesses": [
+      {
+        "id": "business_1",
+        "name": "My Business",
+        "vertical": "ecommerce",
+        "country": "US",
+        "timezone": "America/New_York",
+        "account_review_status": "approved",
+        "created_time": "2023-01-01T12:00:00Z"
+      }
+    ],
+    "phone_numbers": [
+      {
+        "id": "1234567890",
+        "phone_number": "+11234567890",
+        "display_phone_number": "+1 123-456-7890",
+        "status": "connected",
+        "verified_name": "My Business",
+        "quality_rating": "GREEN",
+        "account_mode": "BUSINESS",
+        "name_status": "approved",
+        "certificate": "CERTIFICATE_DATA",
+        "country": "US",
+        "created_time": "2023-01-01T12:00:00Z"
+      },
+      {
+        "id": "0987654321",
+        "phone_number": "+19876543210",
+        "display_phone_number": "+1 987-654-3210",
+        "status": "disconnected",
+        "verified_name": "My Other Business",
+        "quality_rating": "YELLOW",
+        "account_mode": "BUSINESS",
+        "name_status": "pending",
+        "certificate": "CERTIFICATE_DATA",
+        "country": "US",
+        "created_time": "2023-02-01T12:00:00Z"
+      }
+    ],
+    "message_templates": [
+      {
+        "id": "template_1",
+        "name": "Welcome_Message",
+        "language": "en",
+        "status": "approved",
+        "category": "ACCOUNT_UPDATE",
+        "components": [
+          {
+            "type": "header",
+            "format": "TEXT",
+            "text": "Welcome to our service!"
+          },
+          {
+            "type": "body",
+            "text": "Hello {{1}}, thanks for joining us. We're excited to have you on board."
+          },
+          {
+            "type": "footer",
+            "text": "Visit our website for more info."
+          },
+          {
+            "type": "button",
+            "sub_type": "quick_reply",
+            "text": "Contact Us",
+            "payload": "CONTACT_PAYLOAD"
+          }
+        ],
+        "created_time": "2023-01-15T08:30:00Z"
+      },
+      {
+        "id": "template_2",
+        "name": "Order_Confirmation",
+        "language": "en",
+        "status": "approved",
+        "category": "TRANSACTIONAL",
+        "components": [
+          {
+            "type": "header",
+            "format": "DOCUMENT",
+            "text": "Order Confirmation"
+          },
+          {
+            "type": "body",
+            "text": "Your order {{1}} has been confirmed and will be shipped soon. Order ID: {{2}}"
+          },
+          {
+            "type": "footer",
+            "text": "Thank you for shopping with us."
+          },
+          {
+            "type": "button",
+            "sub_type": "quick_reply",
+            "text": "Track Order",
+            "payload": "TRACK_ORDER_PAYLOAD"
+          }
+        ],
+        "created_time": "2023-02-20T10:00:00Z"
+      }
+    ],
+    "insights": [
+      {
+        "id": "insight_1",
+        "phone_number_id": "1234567890",
+        "metric": "messages_sent",
+        "value": 150,
+        "timestamp": "2023-08-01T00:00:00Z"
+      },
+      {
+        "id": "insight_2",
+        "phone_number_id": "0987654321",
+        "metric": "messages_delivered",
+        "value": 140,
+        "timestamp": "2023-08-01T00:00:00Z"
+      },
+      {
+        "id": "insight_3",
+        "phone_number_id": "1234567890",
+        "metric": "messages_read",
+        "value": 130,
+        "timestamp": "2023-08-01T00:00:00Z"
+      }
+    ]
+  }
+  

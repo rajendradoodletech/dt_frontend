@@ -44,8 +44,9 @@ const fetchMessages = async (chatId: string): Promise<Message[]> => {
   // Simulating API delay
   await new Promise(resolve => setTimeout(resolve, 1000));
   return [
-    { id: '1', senderId: '1', content: 'Hello!', timestamp: new Date() },
-    { id: '2', senderId: '2', content: 'Hi there!', timestamp: new Date() },
+    { id: '1', senderId: 'Alice', content: 'Hello!', timestamp: new Date() },
+    { id: '2', senderId: 'Bob', content: 'Hi there!', timestamp: new Date() },
+    { id: '1', senderId: 'Alice', content: 'Hi!', timestamp: new Date() },
   ];
 };
 

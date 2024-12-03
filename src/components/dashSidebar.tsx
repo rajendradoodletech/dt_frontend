@@ -1,4 +1,4 @@
-
+'use client'
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
 import Link from "next/link"
 import { Settings as SettingsIcon, Eye as ViewIcon, MessageSquare as MessageSquareIcon, Calendar as CalendarIcon } from 'lucide-react';
@@ -6,8 +6,16 @@ import logo from "../icons/logo.svg"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/ui/mode-toggle"
+import { useRouter } from "next/navigation";
 
 export default function DashSidebar() {
+  const router = useRouter()
+  const logoutClicked = () => {
+    localStorage.removeItem("access_token")
+    localStorage.removeItem("refresh_token")
+    router.push("/login")
+  }
+
   return (
     <TooltipProvider delayDuration={0}>
       <div className="fixed inset-y-0 left-0 z-20 flex h-full w-16 flex-col items-center justify-between bg-background  border-r">
@@ -79,7 +87,7 @@ export default function DashSidebar() {
               <DropdownMenuSeparator />
               <DropdownMenuItem>Integrations</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem onClick = {logoutClicked}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

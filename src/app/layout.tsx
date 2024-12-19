@@ -1,41 +1,40 @@
-import { ThemeProvider } from "@/components/ui/theme-provider"
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import { fontSans } from "@/lib/fonts";
-import "./globals.css";
+"use client";
+
+import { ThemeProvider } from "@/components/ui/theme-provider";
 import { SiteHeader } from "@/components/ui/site-header";
+import { SessionProvider } from "next-auth/react";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { useEffect } from "react";
 
+const inter = Inter({ subsets: ["latin"] });
 
-
-
-export const metadata: Metadata = {
-  title: "DesertForest Alpha",
-  description: "A system to ease sale from scratch",
-};
 
 export default function RootLayout({
   children,
-}: Readonly<{
+  session, // Pass session here
+}: {
   children: React.ReactNode;
-}>) {
+  session: any;
+}) {
   return (
     <html lang="en">
-      <body className={'${inter.className} flex-col items-center justify-between'}>
+      <body className={`${inter.className} flex-col items-center justify-between`}>
         <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SessionProvider session={session}>
+            {/* Header */}
+            <SiteHeader />
 
-           <div className=" w-full  mx-auto flex p-0 ">
-            {children}</div>
-            
+            {/* Main Content */}
+            <div className="w-full mx-auto flex p-0">{children}</div>
+          </SessionProvider>
         </ThemeProvider>
       </body>
-     
     </html>
   );
 }
-

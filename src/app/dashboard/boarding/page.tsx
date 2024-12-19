@@ -1,5 +1,5 @@
 "use client"
-import { FC } from "react"
+import { FC, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -23,6 +23,54 @@ import { cn } from "@/lib/utils"
 
 
 const Boarding: FC = () => {
+  useEffect(() => {
+      // Load the Facebook SDK
+      const fbScript = document.createElement('script');
+      fbScript.async = true;
+      fbScript.defer = true;
+      fbScript.crossOrigin = 'anonymous';
+      fbScript.src = 'https://connect.facebook.net/en_US/sdk.js';
+  
+      fbScript.onload = () => {
+        window.fbAsyncInit = () => {
+          FB.init({
+            appId: '1182716789356444', // your app ID
+            autoLogAppEvents: true,
+            xfbml: true,
+            version: 'v21.0', // Graph API version
+          });
+        };
+      };
+  
+      document.body.appendChild(fbScript);
+  
+      // Clean up
+      return () => {
+        document.body.removeChild(fbScript);
+      };
+    }, []);
+
+    const fbLoginCallback = (response) => {
+      if (response.authResponse) {
+        const code = response.authResponse.code;
+        console.log('response: ', code); // Handle success
+      } else {
+        console.log('response: ', response); // Handle failure
+      }
+    };
+  
+    const launchWhatsAppSignup = () => {
+      FB.login(fbLoginCallback, {
+        config_id: '956509913042099', // your configuration ID
+        response_type: 'code',
+        override_default_response_type: true,
+        extras: {
+          setup: {},
+          featureType: '',
+          sessionInfoVersion: '3',
+        },
+      });
+    };
   return (
     <div className="flex container flex-col h-screen w-full mx-auto md:flex-row " >
     <main className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 sm:px-6 sm:py-0">
@@ -41,6 +89,7 @@ const Boarding: FC = () => {
           <Button 
             size="lg"
             className="bg-[#22C55E] hover:bg-[#22C55E]/90 text-white rounded-full"
+            onClick={launchWhatsAppSignup}
           >
             I have a business account
           </Button>
@@ -48,6 +97,7 @@ const Boarding: FC = () => {
             variant="outline" 
             size="lg"
             className="rounded-full"
+            onClick={launchWhatsAppSignup}
           >
             Register Now
           </Button>

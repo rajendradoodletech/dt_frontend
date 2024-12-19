@@ -602,7 +602,7 @@ export default function TemplateCreator() {
           <Button 
             type="submit" 
             className="bg-green-600 text-white hover:bg-green-700 transition-all duration-200 ease-in-out hover:scale-105" 
-            disabled={isSubmitting || !isDirty || !isValid}
+            disabled={isSubmitting || !isDirty}
           >
             {isSubmitting ? 'Submitting...' : 'Submit for Verification'}
           </Button>

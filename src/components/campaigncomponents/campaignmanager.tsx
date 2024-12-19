@@ -37,6 +37,7 @@ import {
   TrendingDown,
 } from "lucide-react"
 import { PieChart, Pie, Cell, ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip } from 'recharts'
+import Link from 'next/link'
 
 // Zod schema definitions
 const MetricSchema = z.object({
@@ -595,14 +596,18 @@ export default function CampaignDashboard() {
             ))}
           </div>
           <div className="flex flex-wrap gap-4">
-            <Button className="bg-green-500 hover:bg-green-600">
-              <Plus className="mr-2 h-4 w-4" />
-              Start New Campaign
-            </Button>
-            <Button variant="outline" className="border-green-500 text-green-600 hover:bg-green-50">
-              <FileText className="mr-2 h-4 w-4" />
-              Create New Template
-            </Button>
+            <Link href = "/dashboard/createcampaign">
+              <Button className="bg-green-500 hover:bg-green-600">
+                <Plus className="mr-2 h-4 w-4" />
+                Start New Campaign
+              </Button>
+            </Link>
+            <Link href = "/dashboard/newtemplate">
+              <Button variant="outline" className="border-green-500 text-green-600 hover:bg-green-50">
+                <FileText className="mr-2 h-4 w-4" />
+                Create New Template
+              </Button>
+            </Link>
             <Button variant="outline" className="border-green-500 text-green-600 hover:bg-green-50">
               <Users className="mr-2 h-4 w-4" />
               Add Bulk Contacts

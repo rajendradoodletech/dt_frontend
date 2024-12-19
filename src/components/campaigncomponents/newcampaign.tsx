@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -78,10 +78,10 @@ interface CampaignStore {
 
 const useCampaignStore = create<CampaignStore>((set) => ({
   campaignData: {
-    name: 'Diwali Booster',
+    name: '',
     platform: 'whatsapp',
     mediaTemplate: false,
-    selectedTemplate: 'Festival 1',
+    selectedTemplate: 'hello_world',
     contactGroups: [],
     messageContent: "New offers are available for {{1}} 🎉",
     variable1: 'Name',
@@ -116,24 +116,34 @@ export default function CampaignCreator() {
     defaultValues: campaignData,
   })
 
-  const templates = [
-    'Festival 1',
-    'Festival 2',
-    'Weekly Camp1',
-    'Weekly Camp2',
-    'Weekly Camp 3',
-    'Weekly Camp 3',
-    'Monthly Special',
-    'Seasonal Offer',
-    'Holiday Promo',
-    'Flash Sale',
-  ]
+  useEffect(()=>{
+    const config = {
+      headers: {
+        authorization: localStorage.getItem("access_token")
+      }
+    }
+    axios.get("http://localhost:8000/templates", config)
+    .then(res => {
+      setTemplates(res.data)
+      console.log(res)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }, [])
+
+  const [templates, setTemplates] = useState([])
 
   const handleNext = useCallback(() => {
     if (step < 3) {
       setStep((prev) => (prev + 1) as Step)
     }
   }, [step])
+
+  const submitForm = () => {
+    console.log(campaignData)
+  }
+
 
   const handlePrevious = useCallback(() => {
     if (step > 1) setStep((prev) => (prev - 1) as Step)
@@ -311,13 +321,13 @@ export default function CampaignCreator() {
                         <div className="flex space-x-4" style={{ minWidth: 'max-content' }}>
                           {templates.map((template) => (
                             <Button
-                              key={template}
-                              onClick={() => updateCampaignData({ selectedTemplate: template })}
-                              variant={campaignData.selectedTemplate === template ? "secondary" : "outline"}
+                              key={template.name}
+                              onClick={() => updateCampaignData({ selectedTemplate: template.name })}
+                              variant={campaignData.selectedTemplate === template.name ? "secondary" : "outline"}
                               className="whitespace-nowrap transition-colors hover:bg-secondary/80"
                             >
-                              {template}
-                              {campaignData.selectedTemplate === template && (
+                              {template.name}
+                              {campaignData.selectedTemplate === template.name && (
                                 <Check className="w-4 h-4 ml-2" />
                               )}
                             </Button>
@@ -543,7 +553,7 @@ export default function CampaignCreator() {
                     </Button>
                   ) : null}
                   <Button 
-                    onClick={step < 3 ? handleNext : undefined}
+                    onClick={step < 3 ? handleNext : submitForm}
                     type={step === 3 ? "submit" : "button"}
                   >
                     {step < 3 ? (

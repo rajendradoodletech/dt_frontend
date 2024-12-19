@@ -8,8 +8,45 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { signIn, signOut, useSession } from 'next-auth/react';
 
+function LoginButton() {
+  const { data: session } = useSession();
 
+  return (
+    <div>
+      {session ? (
+        <>
+          <p>Signed in as {session.user.email}</p>
+          <button onClick={() => signOut()}>Sign out</button>
+        </>
+      ) : (
+        <Button variant="outline-primary" className="w-full" onClick={() => signIn('google')}>
+              Login with Google
+            </Button>
+      )}
+    </div>
+  );
+}
+
+function LinkedinLoginButton() {
+  const { data: session } = useSession();
+
+  return (
+    <div>
+      {session ? (
+        <>
+          <p>Signed in </p>
+          <button onClick={() => signOut()}>Sign out</button>
+        </>
+      ) : (
+        <Button variant="outline-primary" className="w-full" onClick={() => signIn('linkedin')}>
+          Login with Linkedin
+        </Button>
+      )}
+    </div>
+  );
+}
   export default function page() {
     const router = useRouter();
     const [loginCredentials, setLoginCredentials] = useState({
@@ -116,9 +153,8 @@ import { useRouter } from "next/navigation";
             <Button type="submit" className="w-full" onClick={loginHandler} disabled = {loading}>
               Login {loading && ". . ."}
             </Button>
-            <Button variant="outline-primary" className="w-full">
-              Login with Google
-            </Button>
+              <LoginButton />
+              <LinkedinLoginButton />
           </div>
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{" "}

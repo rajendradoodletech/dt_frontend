@@ -587,7 +587,6 @@ export default function CampaignCreator() {
                     onClick={step < 3 ? handleNext : submitForm}
                     type={step < 3 ? "button" : "submit"}
                   >
-                    {step}
                     {step < 3 ? (
                       <>
                         Next

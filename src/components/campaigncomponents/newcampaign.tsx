@@ -34,6 +34,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { create } from 'zustand'
 import axios from 'axios'
 
+const backendAPI = "http://localhost:8000"
+
 type Step = 1 | 2 | 3;
 
 interface Contact {
@@ -86,7 +88,7 @@ const useCampaignStore = create<CampaignStore>((set) => ({
     messageContent: "New offers are available for {{1}} 🎉",
     variable1: 'Name',
     variable2: 'Festival Name',
-    sendType: 'schedule',
+    sendType: 'now',
   },
   updateCampaignData: (data) => set((state) => ({ campaignData: { ...state.campaignData, ...data } })),
   submitCampaign: async () => {
@@ -110,6 +112,9 @@ export default function CampaignCreator() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { toast } = useToast()
   const { campaignData, updateCampaignData, submitCampaign } = useCampaignStore()
+  const [selectedTemplate, setSelectedTemplate]= useState({})
+  const [selectedCSV, setSelectedCSV] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
 
   const { control, handleSubmit, formState: { errors } } = useForm<CampaignData>({
     resolver: zodResolver(campaignSchema),
@@ -125,12 +130,21 @@ export default function CampaignCreator() {
     axios.get("http://localhost:8000/templates", config)
     .then(res => {
       setTemplates(res.data)
+      setSelectedTemplate(res.data[0])
       console.log(res)
     })
     .catch(err => {
       console.log(err)
     })
   }, [])
+
+  useEffect(()=>{
+    console.log(selectedTemplate)
+  }, [selectedTemplate])
+
+  useEffect(()=>{
+    console.log(selectedCSV)
+  }, [selectedCSV])
 
   const [templates, setTemplates] = useState([])
 
@@ -142,6 +156,9 @@ export default function CampaignCreator() {
 
   const submitForm = () => {
     console.log(campaignData)
+    handleSubmit(async (data) => {
+      console.log("Data", data)
+    })
   }
 
 
@@ -150,10 +167,11 @@ export default function CampaignCreator() {
   }, [step])
 
   const handleFileUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
+    const file = event.target.files[0]
     if (file) {
       // File selected, open dialog
       setNewGroupName('')
+      setSelectedCSV(event?.target?.files[0])
     }
   }, [])
 
@@ -169,6 +187,7 @@ export default function CampaignCreator() {
     if (file) {
       // File dropped, open dialog
       setNewGroupName('')
+      setSelectedCSV(event?.dataTransfer?.files[0])
     }
   }, [])
 
@@ -205,23 +224,29 @@ export default function CampaignCreator() {
   }, [newGroupName, campaignData.contactGroups, updateCampaignData, toast])
 
   const onSubmit = handleSubmit(async (data) => {
-    try {
-      await submitCampaign()
-      toast({
-        title: "Campaign created",
-        description: "Your campaign has been successfully created and scheduled.",
-      })
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "There was an error submitting your campaign. Please try again.",
-        variant: "destructive",
+    console.log(data)
+    if(step === 3){
+      const formData = new FormData()
+      formData.append("file", selectedCSV)
+      formData.append("campaign_name", data.name)
+      formData.append("template", selectedTemplate.id)
+      formData.append("template_name", selectedTemplate.name)
+      axios.post(`${backendAPI}/create-campaign/`, formData)
+      .then(res => {
+        setShowSuccess(true)
       })
     }
   })
 
   return (
     <div className="container mx-auto p-4 sm:p-6 max-w-7xl">
+      {showSuccess && <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+        <strong className="font-bold">Success! </strong>
+        <span className="block sm:inline">Campaign created successfully</span>
+        <span className="absolute top-0 bottom-0 right-0 px-4 py-3" onClick = {()=>setShowSuccess(false)}>
+          <svg className="fill-current h-6 w-6 text-green-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
+        </span>
+      </div>}
       <h1 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-gray-700">New Campaign</h1>
       
       {/* Steps */}
@@ -276,7 +301,7 @@ export default function CampaignCreator() {
                           name="platform"
                           control={control}
                           render={({ field }) => (
-                            <Select onValueChange={field.onChange} value={field.value}>
+                            <Select onValueChange={field.onChange} value={field.value} disabled>
                               <SelectTrigger id="platform">
                                 <SelectValue placeholder="Select platform" />
                               </SelectTrigger>
@@ -292,7 +317,7 @@ export default function CampaignCreator() {
                     </div>
 
                     {/* Media Template Toggle */}
-                    <div className="p-4 bg-secondary rounded-lg mb-6">
+                    {/* <div className="p-4 bg-secondary rounded-lg mb-6">
                       <div className="flex items-center justify-between">
                         <div>
                           <Label htmlFor="media-template" className="font-medium">Activate Media Template</Label>
@@ -312,7 +337,7 @@ export default function CampaignCreator() {
                           )}
                         />
                       </div>
-                    </div>
+                    </div> */}
 
                     {/* Template Selection with Scroller */}
                     <div className="space-y-4">
@@ -322,7 +347,10 @@ export default function CampaignCreator() {
                           {templates.map((template) => (
                             <Button
                               key={template.name}
-                              onClick={() => updateCampaignData({ selectedTemplate: template.name })}
+                              onClick={() => {
+                                updateCampaignData({ selectedTemplate: template.name })
+                                setSelectedTemplate(template)
+                              }}
                               variant={campaignData.selectedTemplate === template.name ? "secondary" : "outline"}
                               className="whitespace-nowrap transition-colors hover:bg-secondary/80"
                             >
@@ -378,7 +406,7 @@ export default function CampaignCreator() {
                     </div>
 
                     {/* Choose From Saved Contacts */}
-                    <div className="space-y-4 mb-6">
+                    {/* <div className="space-y-4 mb-6">
                       <Label>Choose From Saved Contacts</Label>
                       <Select>
                         <SelectTrigger>
@@ -389,11 +417,12 @@ export default function CampaignCreator() {
                           <SelectItem value="group2">Group Two</SelectItem>
                         </SelectContent>
                       </Select>
-                    </div>
+                    </div> */}
 
                     {/* Added Contact Groups */}
                     <div className="space-y-4">
-                      <Label>Added</Label>
+                      {selectedCSV && <Label>File selected for contacts</Label>}
+                      {/* <Label>Added</Label>
                       {campaignData.contactGroups.map((group) => (
                         <div key={group.id} className="border rounded-lg p-3 sm:p-4 flex items-center justify-between transition-colors hover:bg-secondary/20">
                           <div className="flex items-center space-x-2 sm:space-x-4">
@@ -419,7 +448,7 @@ export default function CampaignCreator() {
                             <MoreHorizontal className="w-4 h-4 sm:w-5 sm:h-5" />
                           </Button>
                         </div>
-                      ))}
+                      ))} */}
                     </div>
                   </>
                 )}
@@ -436,6 +465,8 @@ export default function CampaignCreator() {
                           <Textarea 
                             {...field}
                             className={cn("min-h-[120px] resize-none", errors.messageContent ? "border-red-500" : "")}
+                            value = {templates[0].body}
+                            disabled
                           />
                         )}
                       />
@@ -443,7 +474,7 @@ export default function CampaignCreator() {
                     </div>
 
                     {/* Variable Selection */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                    {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                       <div className="space-y-2">
                         <Label>
                           Choose Variable1 From doc uploaded
@@ -477,7 +508,7 @@ export default function CampaignCreator() {
                           )}
                         />
                       </div>
-                    </div>
+                    </div> */}
 
                     {/* Send Options */}
                     <div className="space-y-4 mb-6">
@@ -554,14 +585,15 @@ export default function CampaignCreator() {
                   ) : null}
                   <Button 
                     onClick={step < 3 ? handleNext : submitForm}
-                    type={step === 3 ? "submit" : "button"}
+                    type={step < 3 ? "button" : "submit"}
                   >
+                    {step}
                     {step < 3 ? (
                       <>
                         Next
                         <ChevronDown className="w-4 h-4 ml-2" />
                       </>
-                    ) : campaignData.sendType === 'now' ? 'Send Now' : 'Schedule Campaign'}
+                    ) : 'Send Now'}
                   </Button>
                 </div>
               </CardContent>
@@ -598,7 +630,7 @@ export default function CampaignCreator() {
                   </div>
                 </div>
                 <div className="bg-background rounded-lg p-3 max-w-[80%] space-y-1 self-start shadow">
-                  <p className="text-sm">{campaignData.messageContent}</p>
+                  <p className="text-sm">{selectedTemplate?.body}</p>
                   <p className="text-[10px] text-muted-foreground text-right">11:14 AM</p>
                 </div>
                 

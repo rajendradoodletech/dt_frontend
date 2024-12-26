@@ -93,6 +93,8 @@ export default function TemplateCreator() {
   const contentRef = useRef<HTMLDivElement>(null)
   const [localContent, setLocalContent] = useState('')
 
+  const [templateFile, setTemplateFile] = useState(false)
+
   const templateType = watch('templateType')
   const showHeader = watch('showHeader')
   const showButtons = watch('showButtons')
@@ -174,6 +176,10 @@ export default function TemplateCreator() {
     })
   }, [handleContentChange])
 
+  const fileChangeHandler = (event) => {
+    setTemplateFile(event.target.files[0])
+  }
+
   const onSubmit = async (data: FormData) => {
     console.log("Create template")
     console.log(watch())
@@ -191,6 +197,9 @@ export default function TemplateCreator() {
         formData.append(key, fData[key]);
       }
     });
+    if (templateFile){
+      formData.append("templateFile", templateFile)
+    }
 
     // Debugging: Log FormData entries
     for (let [key, value] of formData.entries()) {
@@ -217,14 +226,17 @@ export default function TemplateCreator() {
       case 'image':
         return (
           <div className="border-2 border-dashed rounded-lg p-8 text-center space-y-4">
-            <div className="flex justify-center">
-              <ImageIcon className="h-8 w-8 text-gray-400" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Add Image</p>
-              <p className="text-xs text-gray-400">JPG. Max 5MB</p>
-              <p className="text-xs text-gray-400">Recommended Dimension 300× 600px</p>
-            </div>
+            <label>
+              <div className="flex justify-center">
+                <ImageIcon className="h-8 w-8 text-gray-400" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Add Image</p>
+                <p className="text-xs text-gray-400">JPG. Max 5MB</p>
+                <p className="text-xs text-gray-400">Recommended Dimension 300 x 600px</p>
+              </div>
+              <input type = "file" name = "image" style = {{height: "0px", visibility: "hidden"}} onChange={fileChangeHandler}/>
+            </label>
           </div>
         )
       case 'video':
@@ -236,6 +248,7 @@ export default function TemplateCreator() {
             <div>
               <p className="text-sm text-gray-500">Add Video</p>
               <p className="text-xs text-gray-400">MP4. Max 16MB</p>
+              <input type = "file" name = "video" style = {{height: "0px", visibility: "hidden"}} onChange={fileChangeHandler}/>
             </div>
           </div>
         )
@@ -248,6 +261,7 @@ export default function TemplateCreator() {
             <div>
               <p className="text-sm text-gray-500">Add Document</p>
               <p className="text-xs text-gray-400">PDF, DOC. Max 100MB</p>
+              <input type = "file" name = "document" style = {{height: "0px", visibility: "hidden"}} onChange={fileChangeHandler}/>
             </div>
           </div>
         )
@@ -389,9 +403,9 @@ export default function TemplateCreator() {
                     <SelectValue placeholder="Select language" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="english">English</SelectItem>
-                    <SelectItem value="spanish">Spanish</SelectItem>
-                    <SelectItem value="french">French</SelectItem>
+                    <SelectItem value="en_US">English</SelectItem>
+                    <SelectItem value="es_ES">Spanish</SelectItem>
+                    <SelectItem value="fr_FR">French</SelectItem>
                   </SelectContent>
                 </Select>
               )}

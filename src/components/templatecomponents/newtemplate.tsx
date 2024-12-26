@@ -29,24 +29,25 @@ import { Bold, Italic, SmilePlus, Image as ImageIcon, FileText, Video, Phone, Li
 import data from '@emoji-mart/data'
 import dynamic from 'next/dynamic'
 import { debounce } from 'lodash'
+const backendAPI = "http://localhost:8000"
 
 const Picker = dynamic(() => import('@emoji-mart/react'), { ssr: false })
 
 const formSchema = z.object({
-  templateName: z.string().min(1, "Template name is required"),
-  category: z.string().min(1, "Category is required"),
-  language: z.string().min(1, "Language is required"),
-  templateType: z.enum(["standard", "media"]),
-  content: z.string().min(1, "Content is required").refine((val) => val.trim() !== '', {
-    message: "Content cannot be empty",
-  }),
-  showHeader: z.boolean(),
-  showButtons: z.boolean(),
-  showFooter: z.boolean(),
-  headerType: z.enum(["text", "image", "video", "document"]).optional(),
-  headerContent: z.string().optional(),
-  buttonCount: z.number().min(1).max(4).default(1),
-  footerContent: z.string().optional(),
+  // templateName: z.string().min(1, "Template name is required"),
+  // category: z.string().min(1, "Category is required"),
+  // language: z.string().min(1, "Language is required"),
+  // templateType: z.enum(["standard", "media"]),
+  // content: z.string().min(1, "Content is required").refine((val) => val.trim() !== '', {
+  //   message: "Content cannot be empty",
+  // }),
+  // showHeader: z.boolean(),
+  // showButtons: z.boolean(),
+  // showFooter: z.boolean(),
+  // headerType: z.enum(["text", "image", "video", "document"]).optional(),
+  // headerContent: z.string().optional(),
+  // buttonCount: z.number().min(1).max(4).default(1),
+  // footerContent: z.string().optional(),
 })
 
 type FormData = z.infer<typeof formSchema>
@@ -101,7 +102,7 @@ export default function TemplateCreator() {
 
   const handleContentChange = useCallback(
     debounce((e: React.FormEvent<HTMLDivElement>) => {
-      const newContent = e.currentTarget.innerHTML
+      const newContent = e.target.innerHTML
       setLocalContent(newContent)
       setValue('content', newContent, { 
         shouldValidate: true,
@@ -110,7 +111,7 @@ export default function TemplateCreator() {
       })
       setContent(newContent)
       trigger('content')
-    }, 300),
+    }, 8000),
     [setValue, setContent, trigger]
   )
 
@@ -174,13 +175,35 @@ export default function TemplateCreator() {
   }, [handleContentChange])
 
   const onSubmit = async (data: FormData) => {
-    try {
-      const response = await axios.post('/api/templates', data)
-      console.log('Template submitted:', response.data)
-      setShowCelebration(true)
-    } catch (error) {
-      console.error('Error submitting template:', error)
+    console.log("Create template")
+    console.log(watch())
+    let fData = watch()
+    const formData = new FormData();
+
+    Object.keys(fData).forEach((key) => {
+      if (Array.isArray(fData[key])) {
+        // Handle arrays (e.g., buttons)
+        fData[key].forEach((item, index) => {
+          formData.append(`${key}[${index}]`, JSON.stringify(item));
+        });
+      } else {
+        // Handle other key-value pairs
+        formData.append(key, fData[key]);
+      }
+    });
+
+    // Debugging: Log FormData entries
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
     }
+
+    axios.post(`${backendAPI}/template/create`, formData)
+    .then(res => {
+      setShowCelebration(true)
+    })
+    .catch(err => {
+      alert("Something went wrong")
+    })
   }
 
   const renderHeaderInput = () => {
@@ -453,25 +476,12 @@ export default function TemplateCreator() {
                   />
                 </PopoverContent>
               </Popover>
-              <Button type="button" variant="outline" className="text-green-600 hover:bg-green-50 transition-all duration-200 ease-in-out hover:scale-105" onClick={handleAddVariable}>
+              {/* <Button type="button" variant="outline" className="text-green-600 hover:bg-green-50 transition-all duration-200 ease-in-out hover:scale-105" onClick={handleAddVariable}>
                 Add Variable
-              </Button>
+              </Button> */}
             </div>
           </div>
         </div>
-
-        {templateType === 'standard' && (
-          <div className="grid grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label className="text-green-600">Variable1 example value</Label>
-              <Input placeholder="Tom" />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-green-600">Variable2 example value</Label>
-              <Input placeholder="Diwali" />
-            </div>
-          </div>
-        )}
 
         {templateType === 'media' && (
           <div className="space-y-6">

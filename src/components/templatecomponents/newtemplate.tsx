@@ -382,9 +382,9 @@ export default function TemplateCreator() {
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="marketing">Marketing</SelectItem>
-                    <SelectItem value="sales">Sales</SelectItem>
-                    <SelectItem value="support">Support</SelectItem>
+                    <SelectItem value="UTILITY">UTILITY</SelectItem>
+                    <SelectItem value="MARKETING">MARKETING</SelectItem>
+                    <SelectItem value="AUTHENTICATION">AUTHENTICATION</SelectItem>
                   </SelectContent>
                 </Select>
               )}
